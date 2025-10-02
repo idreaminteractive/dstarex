@@ -4,6 +4,7 @@ defmodule DstarEx.Web do
 
     opts =
       if csrf do
+        # we need to add this as a header
         Keyword.put(opts, :"x-csrf-token", csrf)
       else
         opts
