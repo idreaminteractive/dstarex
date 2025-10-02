@@ -1,0 +1,8 @@
+
+
+[env]
+ELIXIR_ERL_OPTIONS="+fnu"
+
+[tools]
+elixir = "latest"
+erlang = "27"
