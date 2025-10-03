@@ -1,11 +1,37 @@
 defmodule DstarEx.Web do
-  defp get_csrf_token(opts \\ []) do
+  def dspost(path, opts \\ []) do
+    run("post", path, opts)
+  end
+
+  def dsget(path, opts \\ []) do
+    run("get", path, opts)
+  end
+
+  def dsput(path, opts \\ []) do
+    run("put", path, opts)
+  end
+
+  def dsdelete(path, opts \\ []) do
+    run("delete", path, opts)
+  end
+
+  def dspatch(path, opts \\ []) do
+    run("patch", path, opts)
+  end
+
+  defp get_csrf_token(opts) do
     csrf = Keyword.get(opts, :csrf)
 
     opts =
       if csrf do
         # we need to add this as a header
-        Keyword.put(opts, :"x-csrf-token", csrf)
+        # do we have a header already?`
+        headers =
+          opts
+          |> Keyword.get(:headers, [])
+          |> Keyword.put(:"x-csrf-token", csrf)
+
+        Keyword.put(opts, :headers, headers)
       else
         opts
       end
@@ -14,33 +40,10 @@ defmodule DstarEx.Web do
     Keyword.delete(opts, :csrf)
   end
 
-  def dspost(path, opts \\ []) do
+  defp run(method, path, opts) do
     opts = get_csrf_token(opts)
     formatted_opts = format_options(opts)
-    "@post('#{path}'#{formatted_opts})"
-  end
-
-  def dsget(path, opts \\ []) do
-    formatted_opts = format_options(opts)
-    "@get('#{path}'#{formatted_opts})"
-  end
-
-  def dsput(path, opts \\ []) do
-    opts = get_csrf_token(opts)
-    formatted_opts = format_options(opts)
-    "@put('#{path}'#{formatted_opts})"
-  end
-
-  def dsdelete(path, opts \\ []) do
-    opts = get_csrf_token(opts)
-    formatted_opts = format_options(opts)
-    "@delete('#{path}'#{formatted_opts})"
-  end
-
-  def dspatch(path, opts \\ []) do
-    opts = get_csrf_token(opts)
-    formatted_opts = format_options(opts)
-    "@patch('#{path}'#{formatted_opts})"
+    "@#{method}('#{path}'#{formatted_opts})"
   end
 
   defp format_options([]), do: ""
@@ -55,7 +58,7 @@ defmodule DstarEx.Web do
   end
 
   defp format_option_pair({key, value}) when is_atom(key) do
-    "#{key}: #{format_value(value)}"
+    "'#{key}': #{format_value(value)}"
   end
 
   defp format_value(value) when is_binary(value) do
@@ -67,7 +70,7 @@ defmodule DstarEx.Web do
     if Keyword.keyword?(value) do
       formatted_pairs =
         value
-        |> Enum.map(fn {k, v} -> "#{k}: #{format_value(v)}" end)
+        |> Enum.map(fn {k, v} -> "'#{k}': #{format_value(v)}" end)
         |> Enum.join(", ")
 
       "{ #{formatted_pairs} }"
