@@ -42,6 +42,7 @@ defmodule DstarEx.Web do
 
   defp run(method, path, opts) do
     opts = get_csrf_token(opts)
+
     formatted_opts = format_options(opts)
     "@#{method}('#{path}'#{formatted_opts})"
   end
@@ -91,5 +92,28 @@ defmodule DstarEx.Web do
 
   defp format_value(value) when is_number(value) do
     "#{value}"
+  end
+
+  def ds_bind_name(key) do
+    clean =
+      key
+      |> to_string()
+      |> String.replace("[", ".")
+      |> String.replace("]", ".")
+      |> String.replace("..", ".")
+      |> String.trim_trailing(".")
+
+    "data-bind-#{clean}"
+  end
+
+  def ds_parse_to_nested_json(str) do
+    str
+    |> String.split("[")
+    |> Enum.map(&String.trim_trailing(&1, "]"))
+    |> Enum.reverse()
+    |> Enum.reduce(%{}, fn key, acc ->
+      %{key => if(acc == %{}, do: [], else: acc)}
+    end)
+    |> Jason.encode!()
   end
 end

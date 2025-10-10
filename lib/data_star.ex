@@ -206,6 +206,8 @@ defmodule DstarEx do
                   {:error, :no_datastar_param}
 
                 json_string ->
+                  IO.inspect(json_string)
+
                   case Jason.decode(json_string) do
                     {:ok, signals} ->
                       {:ok, conn, signals}
@@ -218,12 +220,16 @@ defmodule DstarEx do
             json ->
               json_string = Map.get(json, "datastar")
 
-              case Jason.decode(json_string) do
-                {:ok, signals} ->
-                  {:ok, conn, signals}
+              if json_string == nil do
+                {:error, "No datastar in json"}
+              else
+                case Jason.decode(json_string) do
+                  {:ok, signals} ->
+                    {:ok, conn, signals}
 
-                {:error, reason} ->
-                  {:error, reason}
+                  {:error, reason} ->
+                    {:error, reason}
+                end
               end
           end
 
@@ -274,7 +280,7 @@ defmodule DstarEx do
             {:cont, conn}
 
           {:error, :closed} ->
-            {:halt, conn}
+            {:halt, conn |> Plug.Conn.halt()}
 
           {:error, :enotconn} ->
             # no connection, halt it. May need to do above too
