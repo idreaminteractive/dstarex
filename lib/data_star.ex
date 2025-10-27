@@ -15,7 +15,6 @@ defmodule DstarEx do
     returns Plug.Conn
     """
     def new_sse(conn) do
-
       conn
       |> Plug.Conn.put_resp_header("cache-control", "no-cache")
       |> Plug.Conn.put_resp_header("content-type", "text/event-stream")
@@ -279,29 +278,15 @@ defmodule DstarEx do
           {:ok, conn} ->
             {:cont, conn}
 
+          # the following two cases need to halt the connected when there's errors
+          # this allows us to do pubsub properly
           {:error, :closed} ->
             {:halt, conn |> Plug.Conn.halt()}
 
           {:error, :enotconn} ->
-            # no connection, halt it. May need to do above too
             {:halt, conn |> Plug.Conn.halt()}
         end
       end)
     end
-
-    # defp maybe_add_brotli_headers(conn, true) do
-    #   conn
-    #   |> Plug.Conn.put_resp_header("content-encoding", "br")
-    #   |> Plug.Conn.put_resp_header("vary", "Accept-Encoding")
-    # end
-    #
-    # #
-    # # defp maybe_add_brotli_headers(conn, false), do: conn
-    # #
-    # defp brotli_accepted?(conn) do
-    #   conn
-    #   |> Plug.Conn.get_req_header("accept-encoding")
-    #   |> Enum.any?(&String.contains?(&1, "br"))
-    # end
   end
 end
