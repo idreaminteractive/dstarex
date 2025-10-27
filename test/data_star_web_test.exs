@@ -1,8 +1,6 @@
 defmodule DstarExWebTest do
   use ExUnit.Case
 
-  import Plug.Test
-
   test "csrf gets added into the headers" do
     val = DstarEx.Web.dsget("/test", csrf: "123")
     assert val == "@get('/test', { 'headers': { 'x-csrf-token': '123' } })"

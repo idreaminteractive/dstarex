@@ -15,7 +15,6 @@ defmodule DstarEx do
     returns Plug.Conn
     """
     def new_sse(conn) do
-      use_brotli = conn |> brotli_accepted?
 
       conn
       |> Plug.Conn.put_resp_header("cache-control", "no-cache")
@@ -290,19 +289,19 @@ defmodule DstarEx do
       end)
     end
 
-    defp maybe_add_brotli_headers(conn, true) do
-      conn
-      |> Plug.Conn.put_resp_header("content-encoding", "br")
-      |> Plug.Conn.put_resp_header("vary", "Accept-Encoding")
-    end
-
+    # defp maybe_add_brotli_headers(conn, true) do
+    #   conn
+    #   |> Plug.Conn.put_resp_header("content-encoding", "br")
+    #   |> Plug.Conn.put_resp_header("vary", "Accept-Encoding")
+    # end
     #
-    # defp maybe_add_brotli_headers(conn, false), do: conn
-    #
-    defp brotli_accepted?(conn) do
-      conn
-      |> Plug.Conn.get_req_header("accept-encoding")
-      |> Enum.any?(&String.contains?(&1, "br"))
-    end
+    # #
+    # # defp maybe_add_brotli_headers(conn, false), do: conn
+    # #
+    # defp brotli_accepted?(conn) do
+    #   conn
+    #   |> Plug.Conn.get_req_header("accept-encoding")
+    #   |> Enum.any?(&String.contains?(&1, "br"))
+    # end
   end
 end
