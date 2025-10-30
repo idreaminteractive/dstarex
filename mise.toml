@@ -4,5 +4,5 @@
 ELIXIR_ERL_OPTIONS="+fnu"
 
 [tools]
-elixir = "latest"
+elixir = "1.18.4"
 erlang = "27"

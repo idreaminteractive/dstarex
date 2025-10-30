@@ -103,7 +103,7 @@ defmodule DstarEx.Web do
       |> String.replace("..", ".")
       |> String.trim_trailing(".")
 
-    "data-bind-#{clean}"
+    "data-bind:#{clean}"
   end
 
   def ds_parse_to_nested_json(str) do
