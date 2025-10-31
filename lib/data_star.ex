@@ -181,6 +181,11 @@ defmodule DstarEx do
       send(conn, "datastar-patch-elements", data_lines, send_opts)
     end
 
+    def execute_redirect(conn, url, opts \\ []) do
+      conn
+      |> execute_script("window.location.href = '#{url}'", opts)
+    end
+
     @doc """
     Parses DstarEx signals from Plug.Conn as JSON
 
